@@ -21,12 +21,38 @@ $(function() {
   // add event listener to arrow buttons
   $('.arrow').on('click', () => {
     if(currentImages === images1) {
-      images2.renderPage();
       currentImages = images2;
+      images2.sortData();
+      images2.renderPage();
     }
     else {
-      images1.renderPage();
       currentImages = images1;
+      images1.sortData();
+      images1.renderPage();
+    }
+  });
+
+  // hook up the event listener on radio buttons
+  $('#titleSort').on('click', () => {
+    sortOrder = 'title';
+    if(currentImages === images1) {
+      images2.sortData();
+      images2.renderPage();
+    }
+    else {
+      images1.sortData();
+      images1.renderPage();
+    }
+  });
+  $('#hornSort').on('click', () => {
+    sortOrder = 'horns';
+    if(currentImages === images1) {
+      images2.sortData();
+      images2.renderPage();
+    }
+    else {
+      images1.sortData();
+      images1.renderPage();
     }
   });
 
@@ -50,26 +76,28 @@ $(function() {
           });
         })
         .then( () => {
+          this.sortData();
           this.renderPage();
         });
     },
     this.sortData = function() {
       if(sortOrder === 'title') {
-        console.log(this.images);
         this.images.sort((a, b) => {
-          return a.title.toUpperCase() < b.title.toUpperCase();
+          if(a.title.toUpperCase() < b.title.toUpperCase()) return -1;
+          else if(a.title.toUpperCase() > b.title.toUpperCase()) return 1;
+          else return 0;
         });
-        console.log(this.images);
       }
       else {
         this.images.sort((a, b) => {
-          return a.horns < b.horns;
+          if(a.horns < b.horns) return -1;
+          else if(a.horns > b.horns) return 1;
+          else return 0;
         });
       }
     },
     this.renderPage = function(keyword) {
-      $('main').empty();      
-      this.sortData();
+      $('main').empty();
       // loop through images
       this.images.forEach(image => {
         if(!keyword || (keyword && image.keyword === $('select').first().val())) {
